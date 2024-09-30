@@ -85,30 +85,46 @@
 
 	var carousel = function() {
 		$('.home-slider').owlCarousel({
-	    loop:true,
-	    autoplay: true,
-		autoplayTimeout: 10_000,
-	    margin:0,
-	    animateOut: 'fadeOut',
-	    animateIn: 'fadeIn',
-	    nav:false,
-	    autoplayHoverPause: false,
-	    items: 1,
-	    navText : ["<span class='ion-md-arrow-back'></span>","<span class='ion-chevron-right'></span>"],
-	    responsive:{
-	      0:{
-	        items:1
-	      },
-	      600:{
-	        items:1
-	      },
-	      1000:{
-	        items:1
-	      }
-	    }
+			loop: true,
+			autoplay: true,
+			autoplayTimeout: 10000,
+			margin: 0,
+			animateOut: 'fadeOut',
+			animateIn: 'fadeIn',
+			nav: false,
+			autoplayHoverPause: false,
+			items: 1,
+			navText: ["<span class='ion-md-arrow-back'></span>","<span class='ion-chevron-right'></span>"],
+			responsive: {
+				0: {
+					items: 1
+				},
+				600: {
+					items: 1
+				},
+				1000: {
+					items: 1
+				}
+			},
+			// Disabling drag for better vertical scroll
+			touchDrag: false,  // If you don't want to disable touch drag, remove this line
+			mouseDrag: false   // If you don't want to disable mouse drag, remove this line
+		});
+	
+		// Prevent horizontal swipe when vertically scrolling
+		let startY;
+		$('.home-slider').on('touchstart', function(e) {
+			startY = e.originalEvent.touches[0].pageY;
+		});
+		$('.home-slider').on('touchmove', function(e) {
+			let moveY = e.originalEvent.touches[0].pageY;
+			if (Math.abs(moveY - startY) > 10) {
+				e.stopPropagation();  // Allow vertical scrolling
+			}
 		});
 	};
 	carousel();
+	
 
 	$('nav .dropdown').hover(function(){
 		var $this = $(this);
@@ -138,31 +154,30 @@
 	var scrollWindow = function() {
 		$(window).scroll(function(){
 			var $w = $(this),
-					st = $w.scrollTop(),
-					navbar = $('.ftco_navbar'),
-					sd = $('.js-scroll-wrap');
-
+				st = $w.scrollTop(),
+				navbar = $('.ftco_navbar'),
+				sd = $('.js-scroll-wrap');
+	
 			if (st > 150) {
-				if ( !navbar.hasClass('scrolled') ) {
-					navbar.addClass('scrolled');	
+				if (!navbar.hasClass('scrolled')) {
+					navbar.addClass('scrolled');    
 				}
 			} 
 			if (st < 150) {
-				if ( navbar.hasClass('scrolled') ) {
+				if (navbar.hasClass('scrolled')) {
 					navbar.removeClass('scrolled sleep');
 				}
 			} 
-			if ( st > 350 ) {
-				if ( !navbar.hasClass('awake') ) {
-					navbar.addClass('awake');	
+			if (st > 350) {
+				if (!navbar.hasClass('awake')) {
+					navbar.addClass('awake');    
 				}
-				
 				if(sd.length > 0) {
 					sd.addClass('sleep');
 				}
 			}
-			if ( st < 350 ) {
-				if ( navbar.hasClass('awake') ) {
+			if (st < 350) {
+				if (navbar.hasClass('awake')) {
 					navbar.removeClass('awake');
 					navbar.addClass('sleep');
 				}
@@ -170,6 +185,12 @@
 					sd.removeClass('sleep');
 				}
 			}
+		});
+	
+		// Remove dropdown on link click
+		$('nav .dropdown-menu a').on('click', function() {
+			var $dropdownMenu = $(this).closest('.dropdown-menu');
+			$dropdownMenu.parent().remove(); // Completely remove the dropdown from the DOM
 		});
 	};
 	scrollWindow();
